@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SRS</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <style>
+        body{
+            padding-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <img src='https://ossrs.net/gif/v1/sls.gif?site=ossrs.net&path=/release/binary'/>
+    <div class="container">
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="javascript:void(0)">SRS</a>
+                    <ul class="nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                                安装<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="docker.html">Docker镜像</a></li>
+                                <li><a href="download.html">Binary安装包</a></li>
+                                <li><a href="app.html">App应用下载</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                                Wiki文档<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="https://github.com/ossrs/srs/tree/4.0release#usage" target="_blank">SRS 4.0 快速入门</a></li>
+                                <li><a href="https://github.com/ossrs/srs/wiki/v4_CN_Home" target="_blank">SRS 4.0 中文文档</a></li>
+                                <li><a href="https://github.com/ossrs/srs/wiki/v4_EN_Home" target="_blank">SRS 4.0 English</a></li>
+                                <li class="divider"></li>
+                                <li><a href="https://github.com/ossrs/srs/tree/3.0release#usage" target="_blank">SRS 3.0 快速入门</a></li>
+                                <li><a href="https://github.com/ossrs/srs/wiki/v3_CN_Home" target="_blank">SRS 3.0 中文文档</a></li>
+                                <li><a href="https://github.com/ossrs/srs/wiki/v3_EN_Home" target="_blank">SRS 3.0 English</a></li>
+                                <li class="divider"></li>
+                                <li><a href="http://bbs.ossrs.net" target="_blank">SRS知识星球</a></li>
+                                <li><a href="https://ke.qq.com/course/3202131" target="_blank">零声学院(视频)：SRS4.0入门系列</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                                实用工具<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="../srs-console/trunk/research/console/" target="_blank">Console控制台</a></li>
+                                <li><a href="app.html">App应用下载</a></li>
+                                <li class="divider"></li>
+                                <li><a href="demo.html?page=srs_player.html" target="_blank">HTTP-FLV Player</a></li>
+                                <li><a href="demo.html?page=rtc_player.html" target="_blank">WebRTC Player</a></li>
+                                <li><a href="demo.html?page=srs_gb28181.html" target="_blank">GB28181 Player</a></li>
+                                <li class="divider"></li>
+                                <li><a href="https://naozhong.net.cn/miaobiao/" target="_blank">秒表(naozhong.net.cn)</a></li>
+                                <li><a href="https://www.timeanddate.com/stopwatch/" target="_blank">秒表(timeanddate.com)</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                                在线演示<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://ossrs.net/players/srs_player.html?app=live&stream=livestream.flv&server=r.ossrs.net&port=80&autostart=true&vhost=r.ossrs.net&schema=http" target="_blank">SRS 3.0 HTTP-FLV</a></li>
+                                <li><a href="http://ossrs.net/players/srs_player.html?app=live&stream=livestream.m3u8&server=r.ossrs.net&port=80&autostart=true&vhost=r.ossrs.net&schema=http" target="_blank">SRS 3.0 HLS</a></li>
+                                <li class="divider"></li>
+                                <li><a href="http://ossrs.net/players/srs_player.html?app=live&stream=livestream.flv&server=d.ossrs.net&port=80&autostart=true&vhost=d.ossrs.net&schema=http" target="_blank">SRS 4.0 HTTP-FLV</a></li>
+                                <li><a href="http://ossrs.net/players/srs_player.html?app=live&stream=livestream.m3u8&server=d.ossrs.net&port=80&autostart=true&vhost=d.ossrs.net&schema=http" target="_blank">SRS 4.0 HLS</a></li>
+                                <li><a href="http://ossrs.net/players/rtc_player.html?vhost=d.ossrs.net&server=d.ossrs.net&port=1985&autostart=true" target="_blank">SRS 4.0 WebRTC</a></li>
+                                <li><a href="https://ossrs.net/players/srs_player.html?app=live&stream=livestream.flv&server=d.ossrs.net&port=443&autostart=true&vhost=d.ossrs.net&schema=https" target="_blank">SRS 4.0 HTTPS-FLV</a></li>
+                                <li><a href="https://ossrs.net/players/srs_player.html?app=live&stream=livestream.m3u8&server=d.ossrs.net&port=443&autostart=true&vhost=d.ossrs.net&schema=https" target="_blank">SRS 4.0 HTTPS HLS</a></li>
+                                <li><a class="srs_webrtc_stream" href="https://ossrs.net/players/rtc_publisher.html?vhost=d.ossrs.net&server=d.ossrs.net&api=443&autostart=true&schema=https&stream=show" target="_blank">SRS 4.0 Push WebRTC</a></li>
+                                <li><a class="srs_webrtc_stream" href="https://ossrs.net/players/rtc_player.html?vhost=d.ossrs.net&server=d.ossrs.net&api=443&autostart=true&schema=https&stream=show" target="_blank">SRS 4.0 Play WebRTC</a></li>
+                                <li class="divider"></li>
+                                <li><a class="srs_webrtc_room" href="https://ossrs.net/demos/one2one.html?autostart=true&wss=wss&wsh=d.ossrs.net&host=d.ossrs.net&room=live" target="_blank">一对一通话，两人房间(live)</a></li>
+                                <li><a class="srs_webrtc_room" href="https://ossrs.net/demos/one2one.html?autostart=true&wss=wss&wsh=d.ossrs.net&host=d.ossrs.net&room=live" target="_blank">直播连麦，会议转直播(live)</a></li>
+                                <li><a class="srs_webrtc_room" href="https://ossrs.net/demos/room.html?autostart=true&wss=wss&wsh=d.ossrs.net&host=d.ossrs.net&room=live" target="_blank">多人通话，多人房间(live)</a></li>
+                            </ul>
+                        </li>
+                        <!-- <li><a href="https://github.com/ossrs/srs#usage" target="_blank">Github</a></li> -->
+                        <li>
+                            <a href="https://github.com/ossrs/srs">
+                                <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/ossrs/srs?style=social">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p><a href="#packager" name="packager"><strong>SRS Packager</strong></a></p>
+            <p>
+                若需要打SRS的安装包，可以运行下面的命令打包：
+            </p>
+            <p><pre>
+    echo "Package SRS 4.0 for CentOS7" &&
+    git clone -b 4.0release https://gitee.com/ossrs/srs.git && cd srs &&
+    docker run --rm -it -v `pwd`:/srs -w /srs/trunk registry.cn-hangzhou.aliyuncs.com/ossrs/srs:dev \
+        ./scripts/package.sh --x86-x64</pre></p>
+        </div>
+        <div>
+            <p><a href="#usage" name="usage"><strong>SRS Usage</strong></a></p>
+            <p><pre>
+    echo "For CentOS7" &&
+    unzip -q SRS-CentOS7-x86_64-4.0.*.zip && cd SRS-CentOS7-x86_64-4.0.* && sudo bash INSTALL &&
+    sudo systemctl start srs</pre></p>
+        </div>
+        <div>
+            <p><a href="#releases" name="releases"><strong>SRS Releases</strong></a></p>
+        </div>
+        <div>
+            <p>推荐安装包，稳定版：</p>
+            <ul>
+                <li>
+                    SRS <a href="https://github.com/ossrs/srs/releases/tag/v4.0.191">v4.0-d7, v4.0.191</a>:
+                    <a href="https://github.com/ossrs/srs/releases/download/v4.0.191/SRS-CentOS7-x86_64-4.0.191.zip">CentOS7安装包</a>
+                    <a href="https://github.com/ossrs/srs/releases/download/v4.0.191/srs-server-4.0.191.tar.gz">源码下载</a>
+                    <a href="https://github.com/ossrs/srs/wiki/v4_CN_Home#docker">Docker镜像</a>
+                </li>
+                <li>
+                    SRS <a href="https://github.com/ossrs/srs/releases/tag/v3.0-r8">v3.0-r8, v3.0.168</a>:
+                    <a href="https://github.com/ossrs/srs/releases/download/v3.0-r8/SRS-CentOS7-x86_64-3.0.168.zip">CentOS7安装包</a>
+                </li>
+                <li>
+                    SRS <a href="https://github.com/ossrs/srs/releases/tag/v2.0-r11">v2.0-r11, v2.0.276</a>
+                </li>
+            </ul>
+            <p>想要尝鲜可以用开发版：</p>
+            <ul>
+                <li>
+                    SRS 5.0, 开发版，<a href="https://github.com/ossrs/srs/releases/tag/v5.0.19">v5.0.19</a>:
+                    <a href="files/SRS-Windows-x86_64-5.0.12-setup.exe">Windows(Cygwin)安装包</a>
+                    <a href="https://github.com/ossrs/srs/releases/download/v5.0.19/srs-server-5.0.19.tar.gz">源码下载</a>
+                    <a href="https://github.com/ossrs/srs/wiki/v4_CN_Home#docker">Docker镜像</a>
+                </li>
+            </ul>
+            <p>更多版本，请在<a href="files/">安装包列表</a>中，或者<a href="https://github.com/ossrs/srs/releases">Releases</a>中，选择符合自己系统和版本的安装包。</p>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy;2013~2021 SRS <a href="https://beian.miit.gov.cn">京ICP备19056366号</a></p>
+        </div>
+    </footer>
+</body>
+</html>
+
