@@ -177,6 +177,12 @@
                     <p><canvas id="chart_pams" width="0" height="280"></canvas></p>
                     <ol>
                         <li>
+                            项目主页(需要安装<a href="https://github.com/hypertrons/hypertrons-crx">hypertrons-crx扩展</a>才能看到)：
+                            <a href="https://github.com/arut/nginx-rtmp-module/pulse?redirect=perceptor" target="_blank">NGINX-RTMP</a>,
+                            <a href="https://github.com/ossrs/srs/pulse?redirect=perceptor" target="_blank">SRS</a>,
+                            <a href="https://github.com/meetecho/janus-gateway/pulse?redirect=perceptor" target="_blank">Janus</a>
+                        </li>
+                        <li>
                             数据来源：<a href="https://github.com/X-lab2017/open-digger">x-lab/open-digger</a>
                         </li>
                         <li>
@@ -278,11 +284,13 @@
         pointHoverBorderColor: "rgba(220,220,220,1)", pointHoverBorderWidth: 2, pointRadius: 1, pointHitRadius: 10, spanGaps: false
     };
     new Chart(document.getElementById("chart_stars"), { type: 'line', data: { labels: labels,
-        datasets: [nginxStars, nginxRTMPStars, srsStars, janusStars].map(e => copy(fill(e), options)) }, options: {} });
+        datasets: [srsStars, nginxStars, nginxRTMPStars, janusStars].map(e => copy(fill(e), options)) }, options: {} });
 
     new Chart(document.getElementById("chart_pams"), {type:'line', options: {}, data: {
-        labels:    ['21.09', '21.10', '21.11'], datasets: [
-            {data: [575,     575,      575], label: 'SRS PAM(Project Activity Metric)', color: srsStars.color},
+        labels:    ['21.11', '21.11', '21.11'], datasets: [
+            {data: [575,     575,      575], label: 'SRS-PAM', color: srsStars.color},
+            {data: [78,      78.59,    78], label: 'NginxRTMP-PAM', color: nginxRTMPStars.color},
+            {data: [348,     348,      348], label: 'Janus-PAM', color: janusStars.color},
         ].map(e => copy(fill(e), options)),
     }});
 
