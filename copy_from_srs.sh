@@ -2,17 +2,17 @@
 
 if [[ ! -d trunk || ! -d wiki ]]; then
   echo "no trunk or wiki at $(pwd)"
-  exit -1
+  exit 255;
 fi
 
 if [[ ! -d ~/git/srs.wiki || ! -d ~/git/srs/trunk ]]; then
   echo "no srs or wiki at ~/git"
-  exit -1
+  exit 255;
 fi
 
 if [[ ! -d ~/git/webrtc-web ]]; then
   echo "no webrtc-web at ~/git"
-  exit -1
+  exit 255;
 fi
 
 echo "Copy wiki"
