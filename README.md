@@ -2,7 +2,7 @@
 
 [![](https://github.com/winlinvip/srs.release/actions/workflows/release.yml/badge.svg)](https://github.com/winlinvip/srs.release/actions/workflows/release.yml?query=workflow%3ARelease)
 
-Docker for https://github.com/winlinvip/srs.release
+Docker for https://github.com/ossrs/ossrs.net
 
 ## Usage
 
