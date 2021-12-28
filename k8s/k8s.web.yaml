@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.52
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.78
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -44,6 +44,54 @@ spec:
     port: 80
     protocol: TCP
     targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: versions-deploy
+  labels:
+    app: versions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: versions
+  template:
+    metadata:
+      labels:
+        app: versions
+    spec:
+      containers:
+        - name: versions
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/versions:v1.0.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 30Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: versions-service
+spec:
+  type: ClusterIP
+  selector:
+    app: versions
+  ports:
+  - name: versions-service-9000-9000
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
 
 ---
 
@@ -125,7 +173,7 @@ spec:
             name: ossrs.net
       containers:
         - name: httpx-web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:v1.0.18
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:v1.0.19
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -147,10 +195,8 @@ spec:
             -proxy=http://r.ossrs.net:1985/api/v1/
             -proxy=http://webrtc-signaling-service:8888/api/webrtc/
             -proxy=http://hgsw-tcp-service:1987/gif/v1
-            -proxy=http://service-o1uepcee-1303949587.gz.apigw.tencentcs.com/service/v1/?modifyRequestHost=true
+            -proxy=http://versions-service:9000/service/v1/?modifyRequestHost=true
             -pre-hook=http://hgsw-tcp-service:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false
-            -proxy=http://service-o1uepcee-1303949587.gz.apigw.tencentcs.com/im-service/v1/?modifyRequestHost=true
-            -proxy=http://service-o1uepcee-1303949587.gz.apigw.tencentcs.com/code-service/v1/?modifyRequestHost=true
             -proxy=http://service-cfc43k8y-1303949587.gz.apigw.tencentcs.com/ffmpeg/?modifyRequestHost=true\&trimPrefix=/ffmpeg\&addPrefix=/release
             -proxy=http://web-service:80/
           ports:
