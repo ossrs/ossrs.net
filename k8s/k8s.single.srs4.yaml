@@ -94,6 +94,7 @@ metadata:
   annotations:
     service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
     service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: "true"
+    # https://slb.console.aliyun.com/slb/cn-beijing/slbs/lb-2ze7urmv6rmmbywqsoo5r/listeners
     service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-2ze7urmv6rmmbywqsoo5r
   name: srs4-tcp-service
 spec:

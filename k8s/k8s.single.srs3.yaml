@@ -103,6 +103,7 @@ metadata:
   annotations:
     service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
     service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: "true"
+    # https://slb.console.aliyun.com/slb/cn-beijing/slbs/lb-2zetmjpao868s9yzvr5ld/listeners
     service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-2zetmjpao868s9yzvr5ld
   name: srs3-service
 spec:
