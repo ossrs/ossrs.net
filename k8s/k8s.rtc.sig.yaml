@@ -1,0 +1,47 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sig-deploy
+  labels:
+    app: sig
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sig
+  template:
+    metadata:
+      labels:
+        app: sig
+    spec:
+      containers:
+      - name: sig
+        image: registry.cn-hangzhou.aliyuncs.com/ossrs/signaling:v1.0.5
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 5m
+            memory: 10Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+        ports:
+          - containerPort: 1989
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sig-service
+spec:
+  type: ClusterIP
+  selector:
+    app: sig
+  ports:
+  - name: sig-service-1989-1989
+    port: 1989
+    protocol: TCP
+    targetPort: 1989
+
