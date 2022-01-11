@@ -171,6 +171,9 @@ spec:
         - name: ssl-volume
           configMap:
             name: ossrs.net
+        - name: ssl-volume2
+          configMap:
+            name: ossrs.io
       containers:
         - name: httpx-web
           image: registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:v1.0.19
@@ -192,6 +195,7 @@ spec:
             -sdomain ossrs.net -skey ./etc/ossrs.net.key -scert ./etc/ossrs.net.pem
             -sdomain www.ossrs.net -skey ./etc/ossrs.net.key -scert ./etc/ossrs.net.pem
             -sdomain api.ossrs.net -skey ./etc/api.ossrs.net.key -scert ./etc/api.ossrs.net.pem
+            -sdomain ossrs.io -skey ./etc2/ossrs.io.key -scert ./etc2/ossrs.io.pem
             -proxy=http://r.ossrs.net:1985/api/v1/
             -proxy=http://webrtc-signaling-service:8888/api/webrtc/
             -proxy=http://hgsw-tcp-service:1987/gif/v1
@@ -205,6 +209,8 @@ spec:
           volumeMounts:
             - name: ssl-volume
               mountPath: /usr/local/etc
+            - name: ssl-volume2
+              mountPath: /usr/local/etc2
 
 ---
 
