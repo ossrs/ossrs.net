@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.78
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.83
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -193,6 +193,7 @@ spec:
             -sdomain www.ossrs.net -skey ./etc/ossrs.net.key -scert ./etc/ossrs.net.pem
             -sdomain api.ossrs.net -skey ./etc/api.ossrs.net.key -scert ./etc/api.ossrs.net.pem
             -proxy=http://r.ossrs.net:1985/api/v1/
+            -proxy=http://r.ossrs.net:1985/rtc/v1/
             -proxy=http://webrtc-signaling-service:8888/api/webrtc/
             -proxy=http://hgsw-tcp-service:1987/gif/v1
             -proxy=http://versions-service:9000/service/v1/?modifyRequestHost=true
