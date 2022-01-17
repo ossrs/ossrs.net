@@ -292,17 +292,17 @@
 </footer>
 <script>
     var labels =                 ['22.01', '21.10', '21.4', '20.10', '20.4', '19.10', '19.4', '18.10', '18.04', '17.10', '17.4', '16.10', '16.4'].reverse();
-    var nginxStars =     { data: [   15.3, 14.8, 13.8, 12.7, 11.6, 9.9, 8, 6.4, 5.3, 4, 3.3, 1.8, 0.87].reverse(), label: 'NGINX-Stars(K)', color: "rgba(90,191,99,1)"};
-    var nginxRTMPStars = { data: [   11.5, 11.3, 10.8, 10.8, 9.3, 8.5, 7.7, 6.9, 6.1, 5.3, 4.5, 3.5, 2.8].reverse(), label: 'NGINX-RTMP-Stars(K)', color: "rgb(90,99,191)"};
-    var srsStars =       { data: [   16.9, 16, 11.2, 9.6, 8.2, 6.5, 5.5, 4.5, 3.5, 2.6, 1.8, 1, 0.4].reverse(), label: 'SRS-Stars(K)', color: "rgba(212,90,90,1)"};
-    var janusStars =     { data: [    6.1, 5.9, 5.4, 4.6, 3.4, 3, 2.5, 2.1, 1.7, 1.3, 1, 0.7, 0.3].reverse(), label: 'Janus-Stars(K)', color: "rgb(238,209,21)"};
+    var nginxStars =     { data: [   15.4, 14.8, 13.8, 12.7, 11.6, 9.9, 8, 6.4, 5.3, 4, 3.3, 1.8, 0.87].reverse(), label: 'NGINX-Stars(K)', color: "rgba(90,191,99,1)"};
+    var nginxRTMPStars = { data: [   11.6, 11.3, 10.8, 10.8, 9.3, 8.5, 7.7, 6.9, 6.1, 5.3, 4.5, 3.5, 2.8].reverse(), label: 'NGINX-RTMP-Stars(K)', color: "rgb(90,99,191)"};
+    var srsStars =       { data: [   17.0, 16, 11.2, 9.6, 8.2, 6.5, 5.5, 4.5, 3.5, 2.6, 1.8, 1, 0.4].reverse(), label: 'SRS-Stars(K)', color: "rgba(212,90,90,1)"};
+    var janusStars =     { data: [    6.2, 5.9, 5.4, 4.6, 3.4, 3, 2.5, 2.1, 1.7, 1.3, 1, 0.7, 0.3].reverse(), label: 'Janus-Stars(K)', color: "rgb(238,209,21)"};
     var options = {fill: false, lineTension: 0.1, borderCapStyle: 'butt', borderDash: [], borderDashOffset: 0.0, borderJoinStyle: 'miter', pointBorderColor: "rgba(75,192,192,1)", pointBackgroundColor: "#fff", pointBorderWidth: 1, pointHoverRadius: 5, pointHoverBorderColor: "rgba(220,220,220,1)", pointHoverBorderWidth: 2, pointRadius: 1, pointHitRadius: 10, spanGaps: false};
     new Chart(document.getElementById("chart_stars"), { type: 'line', data: { labels: labels, datasets: [srsStars, nginxStars, nginxRTMPStars, janusStars].map(e => copy(fill(e), options)) }, options: {} });
     new Chart(document.getElementById("chart_pams"), {type:'line', options: {}, data: {
         labels:    ['22.01','21.12','21.11'].reverse(), datasets: [
           {data:   [75.3,   74.9,   78].reverse(), label: 'NginxRTMP-PAM', color: nginxRTMPStars.color},
             {data: [584,     582,    575].reverse(), label: 'SRS-PAM', color: srsStars.color},
-            {data: [320,     313,    348].reverse(), label: 'Janus-PAM', color: janusStars.color},
+            {data: [300,     313,    348].reverse(), label: 'Janus-PAM', color: janusStars.color},
         ].map(e => copy(fill(e), options)),
     }});
 
