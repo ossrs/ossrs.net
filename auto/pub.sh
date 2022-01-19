@@ -13,4 +13,4 @@ git tag -d $TAG 2>/dev/null && git push origin :$TAG
 git tag $TAG
 git push origin $TAG
 echo "publish $TAG ok"
-echo "    https://github.com/winlinvip/srs.release/actions"
+echo "    https://github.com/ossrs/ossrs.net/actions"
