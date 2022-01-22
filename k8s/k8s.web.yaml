@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.83
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.85
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -169,7 +169,7 @@ spec:
     spec:
       containers:
         - name: docs
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.0
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.11
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -197,6 +197,125 @@ spec:
     port: 80
     protocol: TCP
     targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typesense-deploy
+  labels:
+    app: typesense
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typesense
+  template:
+    metadata:
+      labels:
+        app: typesense
+    spec:
+      volumes:
+      - name: cache-volume
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: srs-docs
+      containers:
+        ###################################################################################################
+        - name: typesense
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/typesense:0.22.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 30Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          # Secret, type: Opaque, name: srs-docs, key: search-api-key
+          env:
+          - name: SEARCH_APIKEY
+            valueFrom:
+              secretKeyRef:
+                name: srs-docs
+                key: search-api-key
+          # To store data in the volume.
+          volumeMounts:
+          - name: cache-volume
+            mountPath: /data
+            readOnly: false
+          # Startup args.
+          args: ["--enable-cors", "--data-dir", "/data", "--api-key", "$(SEARCH_APIKEY)"]
+          ports:
+          - containerPort: 8108
+        ###################################################################################################
+        - name: scraper
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docsearch-scraper:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 30Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          env:
+            - name: UPDATE_NB_HITS
+              value: "0"
+            - name: TYPESENSE_HOST
+              value: typesense-for-scraper
+            - name: TYPESENSE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: srs-docs
+                  key: search-api-key
+            - name: TYPESENSE_PORT
+              value: "8108"
+            - name: TYPESENSE_PROTOCOL
+              value: http
+            - name: CONFIG
+              value: /conf/srs-docs-search-config.json
+          volumeMounts:
+            - name: config-volume
+              mountPath: /conf
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh","-c","while true; do sleep 3600; done"]
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: typesense-tcp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: typesense
+  ports:
+  - name: typesense-tcp-service-8108-8108
+    port: 8108
+    protocol: TCP
+    targetPort: 8108
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: typesense-for-scraper
+spec:
+  clusterIP: None
+  selector:
+    app: typesense
+  ports:
+  - name: typesense-for-scraper-8108-8108
+    port: 8108
+    protocol: TCP
+    targetPort: 8108
 
 ---
 
@@ -249,6 +368,7 @@ spec:
             -pre-hook=http://hgsw-tcp-service:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false
             -proxy=http://service-cfc43k8y-1303949587.gz.apigw.tencentcs.com/ffmpeg/?modifyRequestHost=true\&trimPrefix=/ffmpeg\&addPrefix=/release
             -proxy=http://docs-tcp-service:80/lts/
+            -proxy=http://typesense-tcp-service:8108/multi_search
             -proxy=http://web-service:80/
           ports:
             - containerPort: 80
