@@ -277,13 +277,16 @@ spec:
               value: http
             - name: CONFIG
               value: /conf/srs-docs-search-config.json
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              pipenv run python -m src.index;
+              if [[ $? -eq 0 ]]; then echo "Search scraper OK"; sleep infinity; fi;
+              echo "Search scraper fail, quit"; exit -1;
           volumeMounts:
             - name: config-volume
               mountPath: /conf
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh","-c","while true; do sleep 3600; done"]
 
 ---
 
