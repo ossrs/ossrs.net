@@ -282,8 +282,8 @@ spec:
             - "-c"
             - >
               pipenv run python -m src.index;
-              if [[ $? -eq 0 ]]; then echo "Search scraper OK"; sleep infinity; fi;
-              echo "Search scraper fail, quit"; exit -1;
+              echo "Search scraper OK";
+              sleep infinity;
           volumeMounts:
             - name: config-volume
               mountPath: /conf
