@@ -65,7 +65,7 @@ spec:
     spec:
       containers:
         - name: versions
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/versions:v1.0.2
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/versions:v1.0.3
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -113,7 +113,7 @@ spec:
     spec:
       containers:
         - name: releases
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-terraform-releases:v1.0.9
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-terraform:releases-v1.0.39
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -217,7 +217,7 @@ spec:
     spec:
       containers:
         - name: docs
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.13
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.14
           imagePullPolicy: IfNotPresent
           resources:
             requests:
