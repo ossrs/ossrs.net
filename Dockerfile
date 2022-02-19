@@ -18,7 +18,9 @@ COPY webrtc-web /usr/local/srs.release/webrtc-web
 # Create links for Compatibility.
 RUN cd /usr/local/srs.release && ln -sf . srs.release && \
     ln -sf trunk/research/console && ln -sf trunk/research/players && \
-    ln -sf trunk/3rdparty/signaling/www/demos
+    ln -sf trunk/3rdparty/signaling/www/demos && \
+    ln -sf images/srs-256x256.svg srs.svg && \
+    ln -sf images/srs-200x200.png srs.png
 # Default workdir and command.
 WORKDIR /usr/local
 CMD ["./bin/httpx-static", \
