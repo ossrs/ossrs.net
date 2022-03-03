@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.86
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.90
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -65,7 +65,7 @@ spec:
     spec:
       containers:
         - name: versions
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/versions:v1.0.3
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/versions:v1.0.5
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -113,7 +113,7 @@ spec:
     spec:
       containers:
         - name: releases
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-terraform:releases-v1.0.39
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-terraform:releases-v1.0.158
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -217,7 +217,7 @@ spec:
     spec:
       containers:
         - name: docs
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.14
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.27
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -416,8 +416,9 @@ spec:
             -proxy=http://webrtc-signaling-service:8888/api/webrtc/
             -proxy=http://hgsw-tcp-service:1987/gif/v1
             -proxy=http://versions-service:9000/service/v1/?modifyRequestHost=true
-            -proxy=http://srs-terraform-service:9000/terraform/v1/?modifyRequestHost=true
             -pre-hook=http://hgsw-tcp-service:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false
+            -proxy=http://srs-terraform-service:9000/terraform/v1/?modifyRequestHost=true
+            -pre-hook=http://hgsw-tcp-service:1987/terraform/v1/?_sys_logstore=cloud-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false
             -proxy=http://service-cfc43k8y-1303949587.gz.apigw.tencentcs.com/ffmpeg/?modifyRequestHost=true\&trimPrefix=/ffmpeg\&addPrefix=/release
             -proxy=http://docs-tcp-service:80/lts/
             -proxy=http://typesense-tcp-service:8108/multi_search
