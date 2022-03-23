@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.90
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.91
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -113,7 +113,7 @@ spec:
     spec:
       containers:
         - name: releases
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-terraform:releases-v1.0.158
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-cloud:releases-v1.0.237
           imagePullPolicy: IfNotPresent
           resources:
             requests:
