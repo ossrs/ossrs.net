@@ -1,0 +1,15 @@
+<svg viewBox="0 0 125 20" width="125" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g transform="matrix(.5 0 0 0.5 0 0)">
+        <rect width="250" height="40" rx="6" ry="6" fill="#0069ff" fill-rule="evenodd"/>
+        <path d="M45,0v40" fill="none" fill-rule="evenodd" stroke="#fff" stroke-linecap="square"/>
+        <g transform="translate(13 11)">
+            <path d="M10.009849,20v-3.873757c4.114721,0,7.279891-4.071398,5.717088-8.379964-.593469-1.60089-1.859537-2.885554-3.461904-3.458712-4.312544-1.561361-8.3877,1.600889-8.3877,5.711815c0,0,0,0,0,0h-3.877333C0,3.457476,6.33034,-1.641653,13.194801,0.492866c3.006912.928911,5.380789,3.320363,6.310558,6.304737C21.641848,13.675499,16.557794,20,10.009849,20Z" fill="#fff" fill-rule="evenodd"/>
+            <polygon points="9.565217,15.652174 6.086957,15.652174 6.086957,12.173913 6.086957,12.173913 9.565217,12.173913 9.565217,12.173913" fill="#fff" fill-rule="evenodd"/>
+            <polygon points="6.086957,19.130435 3.478261,19.130435 3.478261,19.130435 3.478261,16.521739 6.086957,16.521739" fill="#fff" fill-rule="evenodd"/>
+            <polygon points="3.478261,16.521739 0.869565,16.521739 0.869565,16.521739 0.869565,13.913044 0.869565,13.913044 3.478261,13.913044 3.478261,13.913044" fill="#fff" fill-rule="evenodd"/>
+        </g>
+        <text dx="0" dy="0" font-family="Sailec-Medium, Sailec" font-size="18" font-weight="900" fill="#fff" fill-rule="evenodd">
+            <tspan x="58" y="26">Create SRS Droplet</tspan>
+        </text>
+    </g>
+</svg>
