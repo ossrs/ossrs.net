@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
         - name: web
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.91
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/web:v1.0.92
           imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -70,7 +70,7 @@ spec:
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -113,12 +113,12 @@ spec:
     spec:
       containers:
         - name: releases
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-cloud:releases-v1.0.237
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-cloud:releases-v1.0.256
           imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -170,7 +170,7 @@ spec:
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -217,12 +217,12 @@ spec:
     spec:
       containers:
         - name: docs
-          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.27
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.28
           imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -278,7 +278,7 @@ spec:
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -305,7 +305,7 @@ spec:
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi
@@ -397,7 +397,7 @@ spec:
           resources:
             requests:
               cpu: 5m
-              memory: 30Mi
+              memory: 10Mi
             limits:
               cpu: 200m
               memory: 200Mi

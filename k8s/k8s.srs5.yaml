@@ -61,7 +61,7 @@ spec:
           name: srs5-config
       containers:
       - name: srs
-        image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:v5.0.19
+        image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:v5.0.25
         imagePullPolicy: IfNotPresent
         resources:
           requests:
