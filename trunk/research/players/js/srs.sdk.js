@@ -7,6 +7,14 @@
 
 'use strict';
 
+function SrsError(name, message) {
+    this.name = name;
+    this.message = message;
+    this.stack = (new Error()).stack;
+}
+SrsError.prototype = Object.create(Error.prototype);
+SrsError.prototype.constructor = SrsError;
+
 // Depends on adapter-7.4.0.min.js from https://github.com/webrtc/adapter
 // Async-awat-prmise based SRS RTC Publisher.
 function SrsRtcPublisherAsync() {
@@ -48,7 +56,7 @@ function SrsRtcPublisherAsync() {
         self.pc.addTransceiver("video", {direction: "sendonly"});
 
         if (!navigator.mediaDevices && window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
-            throw new Error(`Please use HTTPS or localhost to publish, read https://github.com/ossrs/srs/issues/2762#issuecomment-983147576`);
+            throw new SrsError('HttpsRequiredError', `Please use HTTPS or localhost to publish, read https://github.com/ossrs/srs/issues/2762#issuecomment-983147576`);
         }
         var stream = await navigator.mediaDevices.getUserMedia(self.constraints);
 
@@ -70,20 +78,17 @@ function SrsRtcPublisherAsync() {
             };
             console.log("Generated offer: ", data);
 
-            $.ajax({
-                type: "POST", url: conf.apiUrl, data: JSON.stringify(data),
-                contentType: 'application/json', dataType: 'json'
-            }).done(function (data) {
+            const http = new XMLHttpRequest();
+            http.onload = function() {
+                if (http.readyState !== http.DONE) return;
+                if (http.status !== 200) return reject(http);
+                const data = JSON.parse(http.responseText);
                 console.log("Got answer: ", data);
-                if (data.code) {
-                    reject(data);
-                    return;
-                }
-
-                resolve(data);
-            }).fail(function (reason) {
-                reject(reason);
-            });
+                return data.code ? reject(data) : resolve(data);
+            }
+            http.open('POST', conf.apiUrl, true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.send(JSON.stringify(data));
         });
         await self.pc.setRemoteDescription(
             new RTCSessionDescription({type: 'answer', sdp: session.sdp})
@@ -140,7 +145,7 @@ function SrsRtcPublisherAsync() {
 
             return {
                 apiUrl: apiUrl, streamUrl: streamUrl, schema: schema, urlObject: urlObject, port: port,
-                tid: Number(parseInt(new Date().getTime()*Math.random()*100)).toString(16).substr(0, 7)
+                tid: Number(parseInt(new Date().getTime()*Math.random()*100)).toString(16).slice(0, 7)
             };
         },
         parse: function (url) {
@@ -151,19 +156,19 @@ function SrsRtcPublisherAsync() {
                 .replace("rtc://", "http://");
 
             var vhost = a.hostname;
-            var app = a.pathname.substr(1, a.pathname.lastIndexOf("/") - 1);
-            var stream = a.pathname.substr(a.pathname.lastIndexOf("/") + 1);
+            var app = a.pathname.substring(1, a.pathname.lastIndexOf("/"));
+            var stream = a.pathname.slice(a.pathname.lastIndexOf("/") + 1);
 
             // parse the vhost in the params of app, that srs supports.
             app = app.replace("...vhost...", "?vhost=");
             if (app.indexOf("?") >= 0) {
-                var params = app.substr(app.indexOf("?"));
-                app = app.substr(0, app.indexOf("?"));
+                var params = app.slice(app.indexOf("?"));
+                app = app.slice(0, app.indexOf("?"));
 
                 if (params.indexOf("vhost=") > 0) {
-                    vhost = params.substr(params.indexOf("vhost=") + "vhost=".length);
+                    vhost = params.slice(params.indexOf("vhost=") + "vhost=".length);
                     if (vhost.indexOf("&") > 0) {
-                        vhost = vhost.substr(0, vhost.indexOf("&"));
+                        vhost = vhost.slice(0, vhost.indexOf("&"));
                     }
                 }
             }
@@ -180,7 +185,7 @@ function SrsRtcPublisherAsync() {
             // parse the schema
             var schema = "rtmp";
             if (url.indexOf("://") > 0) {
-                schema = url.substr(0, url.indexOf("://"));
+                schema = url.slice(0, url.indexOf("://"));
             }
 
             var port = a.port;
@@ -306,19 +311,17 @@ function SrsRtcPlayerAsync() {
             };
             console.log("Generated offer: ", data);
 
-            $.ajax({
-                type: "POST", url: conf.apiUrl, data: JSON.stringify(data),
-                contentType:'application/json', dataType: 'json'
-            }).done(function(data) {
+            const http = new XMLHttpRequest();
+            http.onload = function() {
+                if (http.readyState !== http.DONE) return;
+                if (http.status !== 200) return reject(http);
+                const data = JSON.parse(http.responseText);
                 console.log("Got answer: ", data);
-                if (data.code) {
-                    reject(data); return;
-                }
-
-                resolve(data);
-            }).fail(function(reason){
-                reject(reason);
-            });
+                return data.code ? reject(data) : resolve(data);
+            }
+            http.open('POST', conf.apiUrl, true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.send(JSON.stringify(data));
         });
         await self.pc.setRemoteDescription(
             new RTCSessionDescription({type: 'answer', sdp: session.sdp})
@@ -375,7 +378,7 @@ function SrsRtcPlayerAsync() {
 
             return {
                 apiUrl: apiUrl, streamUrl: streamUrl, schema: schema, urlObject: urlObject, port: port,
-                tid: Number(parseInt(new Date().getTime()*Math.random()*100)).toString(16).substr(0, 7)
+                tid: Number(parseInt(new Date().getTime()*Math.random()*100)).toString(16).slice(0, 7)
             };
         },
         parse: function (url) {
@@ -386,19 +389,19 @@ function SrsRtcPlayerAsync() {
                 .replace("rtc://", "http://");
 
             var vhost = a.hostname;
-            var app = a.pathname.substr(1, a.pathname.lastIndexOf("/") - 1);
-            var stream = a.pathname.substr(a.pathname.lastIndexOf("/") + 1);
+            var app = a.pathname.substring(1, a.pathname.lastIndexOf("/"));
+            var stream = a.pathname.slice(a.pathname.lastIndexOf("/") + 1);
 
             // parse the vhost in the params of app, that srs supports.
             app = app.replace("...vhost...", "?vhost=");
             if (app.indexOf("?") >= 0) {
-                var params = app.substr(app.indexOf("?"));
-                app = app.substr(0, app.indexOf("?"));
+                var params = app.slice(app.indexOf("?"));
+                app = app.slice(0, app.indexOf("?"));
 
                 if (params.indexOf("vhost=") > 0) {
-                    vhost = params.substr(params.indexOf("vhost=") + "vhost=".length);
+                    vhost = params.slice(params.indexOf("vhost=") + "vhost=".length);
                     if (vhost.indexOf("&") > 0) {
-                        vhost = vhost.substr(0, vhost.indexOf("&"));
+                        vhost = vhost.slice(0, vhost.indexOf("&"));
                     }
                 }
             }
@@ -415,7 +418,7 @@ function SrsRtcPlayerAsync() {
             // parse the schema
             var schema = "rtmp";
             if (url.indexOf("://") > 0) {
-                schema = url.substr(0, url.indexOf("://"));
+                schema = url.slice(0, url.indexOf("://"));
             }
 
             var port = a.port;
