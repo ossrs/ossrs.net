@@ -236,6 +236,7 @@ spec:
 ---
 
 # SLB for r.ossrs.net
+# NOTE: Removed and migrated to DO https://cloud.digitalocean.com/droplets/294217025
 # https://slb.console.aliyun.com/slb/cn-beijing/slbs/lb-2zetmjpao868s9yzvr5ld/listeners
 apiVersion: v1
 kind: Service
@@ -258,6 +259,7 @@ spec:
 ---
 
 # SLB for r.ossrs.net
+# NOTE: Removed and migrated to DO https://cloud.digitalocean.com/droplets/294217025
 # https://slb.console.aliyun.com/slb/cn-beijing/slbs/lb-2zetmjpao868s9yzvr5ld/listeners
 apiVersion: v1
 kind: Service
@@ -300,6 +302,7 @@ spec:
 ---
 
 # SLB for r.ossrs.net
+# NOTE: Removed and migrated to DO https://cloud.digitalocean.com/droplets/294217025
 # https://slb.console.aliyun.com/slb/cn-beijing/slbs/lb-2zetmjpao868s9yzvr5ld/listeners
 apiVersion: v1
 kind: Service
