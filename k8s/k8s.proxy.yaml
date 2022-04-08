@@ -1,0 +1,99 @@
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpx-web-deploy
+  labels:
+    app: httpx-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpx-web
+  template:
+    metadata:
+      labels:
+        app: httpx-web
+    spec:
+      volumes:
+        - name: ssl-volume
+          configMap:
+            name: ossrs.net
+      containers:
+        - name: httpx-web
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:v1.0.21
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          command: ["/bin/sh"]
+          args:
+          - "-c"
+          - >
+            ./bin/httpx-static
+            -http=80
+            -https=443 -https=8443 -lets=false
+            -sdomain ossrs.net -skey ./etc/ossrs.net.key -scert ./etc/ossrs.net.pem
+            -sdomain www.ossrs.net -skey ./etc/ossrs.net.key -scert ./etc/ossrs.net.pem
+            -sdomain api.ossrs.net -skey ./etc/api.ossrs.net.key -scert ./etc/api.ossrs.net.pem
+            -proxy=http://webrtc-signaling-service:8888/api/webrtc/
+            -proxy=http://sig-service:1989/sig/
+            -proxy=http://hgsw-tcp-service:1987/gif/v1
+            -proxy=http://versions-service:9000/service/v1/?modifyRequestHost=true
+            -pre-hook=http://hgsw-tcp-service:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false
+            -proxy=http://srs-terraform-service:9000/terraform/v1/?modifyRequestHost=true
+            -pre-hook=http://hgsw-tcp-service:1987/terraform/v1/?_sys_logstore=cloud-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false
+            -proxy=http://service-cfc43k8y-1303949587.gz.apigw.tencentcs.com/ffmpeg/?modifyRequestHost=true\&trimPrefix=/ffmpeg\&addPrefix=/release
+            -proxy=http://docs-tcp-service:80/lts/
+            -proxy=http://typesense-tcp-service:8108/multi_search
+            -proxy=http://web-service:80/
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          volumeMounts:
+            - name: ssl-volume
+              mountPath: /usr/local/etc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
+    service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: "true"
+    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-2ze2nh2hevqwe1nzlpx4g
+  name: httpx-web-service
+spec:
+  type: LoadBalancer
+  # Must set to Local to get the client real IP.
+  # https://www.alibabacloud.com/help/zh/doc-detail/86531.htm
+  externalTrafficPolicy: Local
+  selector:
+    app: httpx-web
+  ports:
+    - name: httpx-web-service-80-80
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: httpx-web-service-8000-80
+      port: 8000
+      protocol: TCP
+      targetPort: 80
+    - name: httpx-web-service-1985-80
+      port: 1985
+      protocol: TCP
+      targetPort: 80
+    - name: httpx-web-service-443-443
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    - name: httpx-web-service-8443-443
+      port: 8443
+      protocol: TCP
+      targetPort: 443

@@ -1,0 +1,47 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: versions-deploy
+  labels:
+    app: versions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: versions
+  template:
+    metadata:
+      labels:
+        app: versions
+    spec:
+      containers:
+        - name: versions
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/versions:v1.0.5
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: versions-service
+spec:
+  type: ClusterIP
+  selector:
+    app: versions
+  ports:
+    - name: versions-service-9000-9000
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+

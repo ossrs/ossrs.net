@@ -1,0 +1,169 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docs-deploy
+  labels:
+    app: docs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docs
+  template:
+    metadata:
+      labels:
+        app: docs
+    spec:
+      containers:
+        - name: docs
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docs:cn-v1.0.28
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          command: ["./bin/httpx-static", "-http", "80", "-root", "./srs-docs"]
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: docs-tcp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: docs
+  ports:
+    - name: docs-tcp-service-80-80
+      port: 80
+      protocol: TCP
+      targetPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typesense-deploy
+  labels:
+    app: typesense
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typesense
+  template:
+    metadata:
+      labels:
+        app: typesense
+    spec:
+      volumes:
+        - name: cache-volume
+          emptyDir: {}
+        - name: config-volume
+          configMap:
+            name: srs-docs
+      containers:
+        ###################################################################################################
+        - name: typesense
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/typesense:0.22.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          # Secret, type: Opaque, name: srs-docs, key: search-api-key
+          env:
+            - name: SEARCH_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: srs-docs
+                  key: search-api-key
+          # To store data in the volume.
+          volumeMounts:
+            - name: cache-volume
+              mountPath: /data
+              readOnly: false
+          # Startup args.
+          args: ["--enable-cors", "--data-dir", "/data", "--api-key", "$(SEARCH_APIKEY)"]
+          ports:
+            - containerPort: 8108
+        ###################################################################################################
+        - name: scraper
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/docsearch-scraper:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          env:
+            - name: UPDATE_NB_HITS
+              value: "0"
+            - name: TYPESENSE_HOST
+              value: typesense-for-scraper
+            - name: TYPESENSE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: srs-docs
+                  key: search-api-key
+            - name: TYPESENSE_PORT
+              value: "8108"
+            - name: TYPESENSE_PROTOCOL
+              value: http
+            - name: CONFIG
+              value: /conf/srs-docs-search-config.json
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - >
+              pipenv run python -m src.index;
+              echo "Search scraper OK";
+              sleep infinity;
+          volumeMounts:
+            - name: config-volume
+              mountPath: /conf
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: typesense-tcp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: typesense
+  ports:
+    - name: typesense-tcp-service-8108-8108
+      port: 8108
+      protocol: TCP
+      targetPort: 8108
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: typesense-for-scraper
+spec:
+  clusterIP: None
+  selector:
+    app: typesense
+  ports:
+    - name: typesense-for-scraper-8108-8108
+      port: 8108
+      protocol: TCP
+      targetPort: 8108

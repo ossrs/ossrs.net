@@ -1,0 +1,48 @@
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srs-terraform-deploy
+  labels:
+    app: srs-terraform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: srs-terraform
+  template:
+    metadata:
+      labels:
+        app: srs-terraform
+    spec:
+      containers:
+        - name: releases
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs-cloud:releases-v1.0.256
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: srs-terraform-service
+spec:
+  type: ClusterIP
+  selector:
+    app: srs-terraform
+  ports:
+    - name: srs-terraform-service-9000-9000
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+

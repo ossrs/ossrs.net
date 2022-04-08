@@ -1,0 +1,55 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hgsw-deploy
+  labels:
+    app: hgsw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hgsw
+  template:
+    metadata:
+      labels:
+        app: hgsw
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: hgsw-config
+      containers:
+        - name: hgsw
+          image: registry.cn-hangzhou.aliyuncs.com/ossrs/hgsw:v1.0.11
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 5m
+              memory: 10Mi
+            limits:
+              cpu: 200m
+              memory: 200Mi
+          command: ["./bin/http-gif-sls-writer", "-c", "./etc/main.conf"]
+          ports:
+            - containerPort: 1987
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/local/etc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hgsw-tcp-service
+spec:
+  type: ClusterIP
+  selector:
+    app: hgsw
+  ports:
+    - name: hgsw-tcp-service-1987-1987
+      port: 1987
+      protocol: TCP
+      targetPort: 1987
+
