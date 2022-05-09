@@ -5,7 +5,7 @@ FROM ossrs/httpx:1
 EXPOSE 80 443
 # It's ok to COPY multiple files.
 COPY index.html crossdomain.xml favicon.ico privacy privacy_cn nginx.html 50x.html /usr/local/srs.release/
-COPY k8s/k8s.go.foo.yaml /usr/local/srs.release/k8s/
+#COPY k8s/k8s.go.foo.yaml /usr/local/srs.release/k8s/
 # Should never copy directories by COPY, instead we should use cp.
 COPY http-rest /usr/local/srs.release/http-rest
 COPY images /usr/local/srs.release/images
