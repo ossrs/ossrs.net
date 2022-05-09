@@ -1,4 +1,4 @@
-name: "Release"
+name: "Release ossrs.net and api.ossrs.net"
 
 on:
   push:
@@ -15,6 +15,13 @@ jobs:
       # Git checkout
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      # Generate variables like:
+      #   SRS_DROPLET_EIP=1.2.3.4
+      - name: Build droplet variables
+        run: |
+          SRS_DROPLET_EIP=$(dig +short lh.ossrs.net)
+          echo "SRS_DROPLET_EIP=$SRS_DROPLET_EIP" >> $GITHUB_ENV
 
       ################################################################
       # Build
@@ -50,14 +57,63 @@ jobs:
           docker push --all-tags registry.cn-hangzhou.aliyuncs.com/ossrs/web
 
       ################################################################
-      # K8S
-      - name: Setup KUBECONFIG for Aliyun ACK
-        run: |-
-          KUBECONFIG=$RUNNER_TEMP/kubeconfig_$(date +%s)
-          echo "${{ secrets.KUBECONFIG }}" > $KUBECONFIG
-          echo "KUBECONFIG=$KUBECONFIG" >> $GITHUB_ENV
-      # K8S for SRS web
-      - name: Release SRS web to Aliyun ACK
-        run: |-
-          kubectl set image deploy/web-deploy web=registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_TAG
-          kubectl describe deploy/web-deploy
+      # Execute command in a ssh, because ufw limit the rate.
+      - name: Restart the containers
+        env:
+          SEARCH_APIKEY: ${{ secrets.SEARCH_APIKEY }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SRS_DROPLET_EIP }}
+          username: root
+          key: ${{ secrets.DIGITALOCEAN_SSHKEY }}
+          port: 22
+          envs: SRS_TAG,SRS_MAJOR
+          timeout: 60s
+          command_timeout: 30m
+          script: |
+            #
+            #ufw allow 20081 # For HTTPX proxy.
+            #ufw allow 8100 # For ossrs.net static files.
+            #ufw allow 1987 # For hgsw SLS log proxy service.
+            #
+            #ufw allow 8101 # For srs-cloud version service.
+            #ufw allow 8102 # For srs server version service.
+            #ufw allow 1989 # For SRS demo signaling service.
+            #
+            export SRS_DROPLET_PIP=$(ifconfig eth0 |grep 'inet ' |awk '{print $2}')
+            echo "SRS_DROPLET_PIP=$SRS_DROPLET_PIP"
+            #
+            # Restart HTTPX
+            for ((i=0; i < 5; i++)); do
+              if [[ $(docker ps -af name=docs-proxy |wc -l) -eq 1 ]]; then echo "Killed"; break; fi;
+              docker rm -f docs-proxy; sleep 0.3;
+            done
+            docker run -d -it --restart always \
+              --name docs-proxy -p 20081:80 \
+              registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:v1.0.19 \
+              ./bin/httpx-static -http 80 \
+              -proxy http://$SRS_DROPLET_PIP:1989/sig/ \
+              -proxy http://$SRS_DROPLET_PIP:1987/gif/ \
+              -proxy http://$SRS_DROPLET_PIP:8102/service/v1/?modifyRequestHost=true \
+              -pre-hook http://$SRS_DROPLET_PIP:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false \
+              -proxy http://$SRS_DROPLET_PIP:8101/terraform/v1/?modifyRequestHost=true \
+              -pre-hook http://$SRS_DROPLET_PIP:1987/terraform/v1/?_sys_logstore=cloud-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false \
+              -proxy http://$SRS_DROPLET_PIP:8100/
+            #
+            # Restart static files
+            for ((i=0; i < 5; i++)); do
+              if [[ $(docker ps -af name=docs-statics |wc -l) -eq 1 ]]; then echo "Killed"; break; fi;
+              docker rm -f docs-statics; sleep 0.3;
+            done
+            docker run -d -it --restart always --name docs-statics -p 8100:80 \
+              registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_TAG
+            #
+            # Restart HGSW
+            for ((i=0; i < 5; i++)); do
+              if [[ $(docker ps -af name=docs-hgsw |wc -l) -eq 1 ]]; then echo "Killed"; break; fi;
+              docker rm -f docs-hgsw; sleep 0.3;
+            done
+            docker run -d -it --restart always --name docs-hgsw -p 1987:1987 \
+              -v /root/conf/hgsw.conf:/usr/local/etc/main.conf \
+              registry.cn-hangzhou.aliyuncs.com/ossrs/hgsw:v1.0.11
+
