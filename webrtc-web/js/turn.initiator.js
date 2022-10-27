@@ -10,7 +10,10 @@ var connect = function(){
 
     new Promise(function(resolve, reject){
         navigator.getUserMedia({
-            video:true,audio:true
+            audio:true,
+            video: {
+              width: {ideal: 320, max: 576}
+            }
         },function(stream){
             resolve(stream);
         }, function(error){
@@ -28,7 +31,7 @@ var connect = function(){
         // Use a peer connection to share stream to responder.
         var conn = new window.webkitRTCPeerConnection({
             iceTransportPolicy: 'relay',
-            iceServers:[{urls:["turn:stun.ossrs.net"], username:"winlin", credential:"12345678"
+            iceServers:[{urls:["turn:stun.ossrs.net:13478"], username:"winlin", credential:"12345678"
         }]});
         conn.addStream(stream);
         console.log("[conn.addStream] add stream to peer connection");
