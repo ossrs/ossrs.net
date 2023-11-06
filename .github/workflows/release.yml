@@ -20,7 +20,7 @@ jobs:
       #   SRS_DROPLET_EIP=1.2.3.4
       - name: Build droplet variables
         run: |
-          SRS_DROPLET_EIP=$(dig +short lh.ossrs.net)
+          SRS_DROPLET_EIP=$(dig +short ossrs.net)
           echo "SRS_DROPLET_EIP=$SRS_DROPLET_EIP" >> $GITHUB_ENV
 
       ################################################################
