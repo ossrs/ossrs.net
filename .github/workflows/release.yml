@@ -72,57 +72,40 @@ jobs:
           command_timeout: 30m
           script: |
             #
-            #ufw allow 20081 # For HTTPX proxy.
-            #ufw allow 8100 # For ossrs.net static files.
-            #ufw allow 1987 # For hgsw SLS log proxy service.
+            ufw allow 20081 # For HTTPX proxy.
+            ufw allow 8100 # For ossrs.net static files.
             #
             #ufw allow 8101 # For srs-cloud version service.
             #ufw allow 8102 # For srs server version service.
             #ufw allow 1989 # For SRS demo signaling service.
+            #ufw allow 1987 # For hgsw SLS log proxy service.
             #
             export SRS_DROPLET_PIP=$(ifconfig eth0 |grep 'inet ' |awk '{print $2}')
             echo "SRS_DROPLET_PIP=$SRS_DROPLET_PIP"
             #
             # Restart HTTPX
             cat << END > /root/restart_docs-proxy.sh
-              for ((i=0; i < 5; i++)); do
-                if [[ $(docker ps -af name=docs-proxy |wc -l) -eq 1 ]]; then echo "Killed"; break; fi;
-                docker rm -f docs-proxy; sleep 0.3;
-              done
-              docker run -d -it --restart always \
-                --name docs-proxy -p 20081:80 \
-                registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:1 \
-                ./bin/httpx-static -http 80 \
-                -proxy http://$SRS_DROPLET_PIP:1989/sig/ \
-                -proxy http://$SRS_DROPLET_PIP:1987/gif/ \
-                -proxy http://$SRS_DROPLET_PIP:8102/service/v1/?modifyRequestHost=true \
-                -pre-hook http://$SRS_DROPLET_PIP:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false \
-                -proxy http://$SRS_DROPLET_PIP:8101/terraform/v1/?modifyRequestHost=true \
-                -pre-hook http://$SRS_DROPLET_PIP:1987/terraform/v1/?_sys_logstore=cloud-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false \
+              docker pull registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:1
+              docker rm -f docs-proxy || sleep 1
+              docker run -d -it --restart always \\
+                --name docs-proxy -p 20081:80 \\
+                registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:1 \\
+                ./bin/httpx-static -http 80 \\
+                -proxy http://$SRS_DROPLET_PIP:1989/sig/ \\
+                -proxy http://$SRS_DROPLET_PIP:1987/gif/ \\
+                -proxy http://$SRS_DROPLET_PIP:8102/service/v1/?modifyRequestHost=true \\
+                -pre-hook http://$SRS_DROPLET_PIP:1987/service/v1/?_sys_logstore=srs-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false \\
+                -proxy http://$SRS_DROPLET_PIP:8101/terraform/v1/?modifyRequestHost=true \\
+                -pre-hook http://$SRS_DROPLET_PIP:1987/terraform/v1/?_sys_logstore=cloud-eggs\&_sys_logfmt_app=true\&_sys_keep_ua=false\&_sys_keep_referer=false\&_sys_keep_oreferer=false\&_sys_keep_oua=false\&_sys_keep_fwd=false \\
                 -proxy http://$SRS_DROPLET_PIP:8100/
             END
             bash /root/restart_docs-proxy.sh
             #
             # Restart static files
             cat << END > /root/restart_docs-statics.sh
-              for ((i=0; i < 5; i++)); do
-                if [[ $(docker ps -af name=docs-statics |wc -l) -eq 1 ]]; then echo "Killed"; break; fi;
-                docker rm -f docs-statics; sleep 0.3;
-              done
+              docker pull registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_MAJOR
+              docker rm -f docs-statics || sleep 1
               docker run -d -it --restart always --name docs-statics -p 8100:80 \
-                registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_TAG
+                registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_MAJOR
             END
             bash /root/restart_docs-statics.sh
-            #
-            # Restart HGSW
-            cat << END > /root/restart_docs-hgsw.sh
-              for ((i=0; i < 5; i++)); do
-                if [[ $(docker ps -af name=docs-hgsw |wc -l) -eq 1 ]]; then echo "Killed"; break; fi;
-                docker rm -f docs-hgsw; sleep 0.3;
-              done
-              docker run -d -it --restart always --name docs-hgsw -p 1987:1987 \
-                -v /root/conf/hgsw.conf:/usr/local/etc/main.conf \
-                registry.cn-hangzhou.aliyuncs.com/ossrs/hgsw:v1.0.11
-            END
-            bash /root/restart_docs-hgsw.sh
-
