@@ -85,10 +85,12 @@ jobs:
             #
             # Restart HTTPX
             cat << END > /root/restart_docs-proxy.sh
+              # See https://github.com/ossrs/ossrs.net
               docker pull registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:1
               docker rm -f docs-proxy || sleep 1
               docker run -d -it --restart always \\
                 --name docs-proxy -p 20081:80 \\
+                --log-driver=json-file --log-opt=max-size=500m --log-opt=max-file=3 \\
                 registry.cn-hangzhou.aliyuncs.com/ossrs/httpx:1 \\
                 ./bin/httpx-static -http 80 \\
                 -proxy http://$SRS_DROPLET_PIP:1989/sig/ \\
@@ -103,9 +105,11 @@ jobs:
             #
             # Restart static files
             cat << END > /root/restart_docs-statics.sh
+              # See https://github.com/ossrs/ossrs.net
               docker pull registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_MAJOR
               docker rm -f docs-statics || sleep 1
-              docker run -d -it --restart always --name docs-statics -p 8100:80 \
+              docker run -d -it --restart always --name docs-statics -p 8100:80 \\
+                --log-driver=json-file --log-opt=max-size=500m --log-opt=max-file=3 \\
                 registry.cn-hangzhou.aliyuncs.com/ossrs/web:$SRS_MAJOR
             END
             bash /root/restart_docs-statics.sh
